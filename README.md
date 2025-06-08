@@ -62,27 +62,6 @@ In commercial kitchens, manual ingredient preparation introduces errors, ineffic
 
 ---
 
-## Project Timeline
-
-| Week | Milestone                                   |
-| ---- | ------------------------------------------- |
-| 1    | Finalize system design & responsibilities   |
-| 2    | 3D print dispenser, assemble hardware       |
-| 3    | Integrate sensor + actuator, core logic     |
-| 4    | Set up wireless communication, data logging |
-| 5    | Full integration, testing, and demo prep    |
-
----
-
-## Real-World Applications
-
-* Restaurant kitchens and catering services
-* Meal-prep and food automation businesses
-* Smart home kitchen appliances
-* Food processing lines requiring measured dosing
-
----
-
 ## Getting Started
 
 1. **Git**
@@ -91,7 +70,7 @@ In commercial kitchens, manual ingredient preparation introduces errors, ineffic
    ```
 2. Install [PlatformIO extension](https://platformio.org/install/ide?install=vscode). 
 3. Modify [platformio.ini](/platformio.ini) to match the COM ports in your environment. 
-4. Replace your WiFi SSID and MQTT Broker in config.h
+4. Replace your WiFi SSID and MQTT Broker in [config.h](/src/config.h).
 5. **Upload**
    ```sh
    pio run -t upload
@@ -105,7 +84,3 @@ In commercial kitchens, manual ingredient preparation introduces errors, ineffic
 * Sushant Shailesh Panchal
 * Yanyi He
 * Yash Parab
-
----
-
-Would you like me to generate separate subfolders with starter files (`/firmware`, `/controller`, etc.) to go with this?
