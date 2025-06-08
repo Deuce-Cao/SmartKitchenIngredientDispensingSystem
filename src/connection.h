@@ -1,6 +1,12 @@
+#include <Arduino.h>
+#ifndef CONNECTION_H
+#define CONNECTION_H
+
 void connectToWiFi();
 
 void connectToMQTT();
 void publishStatus(String status);
 void mqttCallback(char *topic, byte *payload, unsigned int length);
+void reconnectMQTT();
 void loopMQTT();
+#endif

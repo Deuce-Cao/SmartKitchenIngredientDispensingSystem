@@ -2,10 +2,11 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include "connection.h"
+#include "dispenser.h"
+#include <ArduinoJson.h>
 
 WiFiClient espClient;
 PubSubClient client(espClient);
-
 
 void connectToWiFi()
 {
@@ -21,27 +22,40 @@ void connectToWiFi()
     Serial.println(WiFi.localIP());
 }
 
-
 void connectToMQTT()
 {
-    long lastMsg = 0;
-    char msg[50];
-    int value = 0;
-
     client.setServer(MQTT_SERVER, MQTT_PORT);
     client.setCallback(mqttCallback);
+    reconnectMQTT();
 }
 
 void mqttCallback(char *topic, byte *payload, unsigned int length)
 {
-    Serial.print("Message arrived [");
-    Serial.print(topic);
-    Serial.print("] ");
-    for (int i = 0; i < length; i++)
+    StaticJsonDocument<200> doc;
+    DeserializationError error = deserializeJson(doc, payload, length);
+
+    if (error)
     {
-        Serial.print((char)payload[i]);
+        Serial.println("JSON parse error");
+        return;
     }
-    Serial.println();
+
+    String topicStr = String(topic);
+
+    if (topicStr.endsWith("/open"))
+    {
+        int count = doc["open"];
+        handleCommand(count);
+    }
+    else
+    {
+
+        Serial.print("Message arrived [");
+        Serial.print(topic);
+        Serial.print("] ");
+        Serial.print(doc["message"].as<String>());
+            Serial.println();
+    }
 }
 
 void reconnectMQTT()
@@ -75,9 +89,14 @@ void loopMQTT()
 
 void publishStatus(String status)
 {
+    StaticJsonDocument<200> doc;
+    doc["status"] = status;
+
     if (client.connected())
     {
-        client.publish(STATUS_TOPIC, status.c_str());
+        char buffer[256];
+        serializeJson(doc, buffer);
+        client.publish(STATUS_TOPIC, buffer);
     }
     else
     {
