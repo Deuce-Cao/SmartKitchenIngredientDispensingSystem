@@ -53,7 +53,7 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
         Serial.print("Message arrived [");
         Serial.print(topic);
         Serial.print("] ");
-        Serial.print(doc["message"].as<String>());
+        Serial.print(doc.as<String>());
             Serial.println();
     }
 }
