@@ -1,5 +1,5 @@
-#define WIFI_SSID "COGECO-222E58"
-#define WIFI_PASS "uw5mmnkj"
+#define WIFI_SSID "SEPT SmartLAB 537"
+#define WIFI_PASS "Factory1"
 #define MQTT_SERVER "broker.hivemq.com"
 #define MQTT_PORT 1883
 

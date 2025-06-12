@@ -16,6 +16,7 @@ void initDispenser()
 
 bool checkOccupancy()
 {
+
     int val = digitalRead(sensorPin); // or analogRead if applicable
     return (val == HIGH);             // true means blocked
 }
@@ -23,7 +24,14 @@ bool checkOccupancy()
 bool openGate()
 {
     // Send signal to motor to open & close gate once
-    // Motor code to be filled based on motor type
+    
+    /*
+    two stepper motors
+    Motor 1 Left:
+    When a comnmand is received, the motor always rotates to either dirextion (depends on the ingredient) for a certain speed and angle, 
+    then goes back to the initial position double speed. 
+    Motor 2 Right
+    */
     Serial.println("Gate opened once.");
     return true; // or false if failed
 }
