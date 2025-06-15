@@ -22,7 +22,8 @@ void initDispenser()
     hasTask = false;
 }
 
-bool isBusy(){
+bool isBusy()
+{
     return hasTask;
 }
 
@@ -31,19 +32,24 @@ void queueTask(Position pos, int count)
     currentTask.pos = pos;
     currentTask.count = count;
     hasTask = true;
+    publishStatus(1, "RUNNING");
 }
 
 void loopDispenser()
 {
-    dropOne(currentTask.pos);
+    openOne(currentTask.pos);
+    delay(MOTOR_INTERVAL);
+    closeOne(currentTask.pos);
+    delay(RESET_INTERVAL);
+    resetMotorPin();
+
     currentTask.count--;
 
     if (currentTask.count <= 0)
     {
         hasTask = false;
         afterDrop();
-        publishStatus(0, "Task completed");
+        publishStatus(1, "DONE");
         Serial.println("Task completed");
     }
-    delay(100);
 }

@@ -41,24 +41,36 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
     if (error)
     {
         Serial.println("JSON parse error");
+        publishStatus(1, "ERROR: JSON parse error");
         return;
     }
 
     String topicStr = String(topic);
+
+    if (topicStr == PING_TOPIC && doc.containsKey("reboot"))
+    {
+        ESP.restart();
+    }
 
     if (topicStr.endsWith("/open"))
     {
         try
         {
             Position pos = doc["pos"];
-            Serial.println(String(pos));
+            if (pos < 0 || pos > 3)
+            {
+                Serial.println("Invalid position");
+                publishStatus(1, "ERROR: Invalid position");
+                return;
+            }
             int count = doc["count"];
             if (count <= 0)
             {
                 Serial.println("Invalid count");
-                publishStatus(1, "Invalid count");
+                publishStatus(1, "ERROR: Invalid count");
                 return;
             }
+            Serial.println(doc.as<String>());
             if (!isBusy())
             {
                 queueTask(pos, count);
@@ -66,13 +78,13 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
             else
             {
                 Serial.println("Busy");
-                publishStatus(1, "Busy");
+                publishStatus(1, "BUSY");
             }
         }
         catch (const std::exception &e)
         {
             Serial.println("Error parsing open command");
-            publishStatus(1, "Parsing error");
+            publishStatus(1, "ERROR: Parsing error");
             return;
         }
     }
@@ -101,19 +113,23 @@ void reconnectMQTT()
             Serial.print("failed, rc=");
             Serial.print(client.state());
             Serial.println(" try again in 5 seconds");
-            delay(5000);
         }
     }
 }
 
 void loopMQTT()
 {
+    static unsigned long lastReconnect = 0;
+    unsigned long now = millis();
     if (!client.connected())
     {
-        reconnectMQTT();
+        if (now - lastReconnect > RECONNECT_INTERVAL)
+        {
+            lastReconnect = now;
+            reconnectMQTT();
+        }
     }
     client.loop();
-    delay(10);
 }
 
 void publishStatus(bool att, String status)

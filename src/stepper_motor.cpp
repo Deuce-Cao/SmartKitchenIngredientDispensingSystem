@@ -57,25 +57,27 @@ void closeOne(Position pos)
     }
 }
 
-void resetMotorPin(){
-    for (int i = 0; i < 4; i++){
+void resetMotorPin()
+{
+    for (int i = 0; i < 4; i++)
+    {
         digitalWrite(motorAPins[i], LOW);
         digitalWrite(motorBPins[i], LOW);
     }
 }
 
-void dropOne(Position pos)
-/*
-two stepper motors
-Motor 1 Left:
-When a command is received, the motor always rotates to either direction (depends on the ingredient) for a certain speed and angle,
-then goes back to the initial position same speed.
-Motor 2 Right
-*/
-{
-    openOne(pos);
-    delay(300);
-    closeOne(pos);
-    delay(100);
-    resetMotorPin();
-}
+// void dropOne(Position pos)
+// /*
+// two stepper motors
+// Motor 1 Left:
+// When a command is received, the motor always rotates to either direction (depends on the ingredient) for a certain speed and angle,
+// then goes back to the initial position same speed.
+// Motor 2 Right
+// */
+// {
+//     openOne(pos);
+//     delay(300);
+//     closeOne(pos);
+//     delay(100);
+//     resetMotorPin();
+// }
