@@ -13,12 +13,21 @@
 #define DISPENSER_ID "dispenser_A"
 #define DISPENSE_TOPIC "dispenser/test/esp32/#"
 #define STATUS_TOPIC "dispenser/status/esp32/A"
+#define PING_TOPIC "dispenser/test/esp32/ping"
 
 #define STEPS_PER_REV 2048
 #define MOTOR_A_PINS {16, 18, 17, 19}
 #define MOTOR_B_PINS {27, 25, 26, 13}
 //#define SENSOR_PIN_EN 39
 #define SENSOR_PIN_OUT 34
+
+#define RECONNECT_INTERVAL 5000
+#define MOTOR_INTERVAL 300
+#define RESET_INTERVAL 100
+#define DISPENSE_INTERVAL 100
+#define REPORT_INTERVAL 500
+#define STATUS_INTERVAL 50
+#define MQTT_INTERVAL 20
 
 enum Position
 {
@@ -29,5 +38,9 @@ enum Position
 };
 
 #define ORDER {"ID" : 0, "items" : [ "a", "b", "c", "d" ], "time" : "2025-01-01 00:00:00.0"}
+
+
+
+
 
 #endif

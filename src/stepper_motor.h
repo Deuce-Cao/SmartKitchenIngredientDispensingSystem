@@ -4,5 +4,8 @@
 
 
 void initStepperMotor();
-void dropOne(Position pos);
+void openOne(Position pos);
+void closeOne(Position pos);
+void resetMotorPin();
+
 #endif
