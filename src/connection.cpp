@@ -1,18 +1,22 @@
 #include "config.h"
 #include <WiFi.h>
+#include <WiFiMulti.h>
 #include <PubSubClient.h>
 #include "connection.h"
 #include "dispenser.h"
 #include <ArduinoJson.h>
 
+WiFiMulti wifiMulti;
 WiFiClient espClient;
 PubSubClient client(espClient);
 
 void connectToWiFi()
 {
     WiFi.mode(WIFI_STA);
-    WiFi.begin(WIFI_SSID, WIFI_PASS);
-    while (WiFi.status() != WL_CONNECTED)
+    wifiMulti.addAP(HOME_WIFI_SSID, HOME_WIFI_PASS);
+    wifiMulti.addAP(LAB_WIFI_SSID, LAB_WIFI_PASS);
+
+    while (wifiMulti.run() != WL_CONNECTED)
     {
         delay(500);
         Serial.print(".");
@@ -44,17 +48,41 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
 
     if (topicStr.endsWith("/open"))
     {
-        int count = doc["open"];
-        handleCommand(count);
+        try
+        {
+            Position pos = doc["pos"];
+            Serial.println(String(pos));
+            int count = doc["count"];
+            if (count <= 0)
+            {
+                Serial.println("Invalid count");
+                publishStatus(1, "Invalid count");
+                return;
+            }
+            if (!isBusy())
+            {
+                queueTask(pos, count);
+            }
+            else
+            {
+                Serial.println("Busy");
+                publishStatus(1, "Busy");
+            }
+        }
+        catch (const std::exception &e)
+        {
+            Serial.println("Error parsing open command");
+            publishStatus(1, "Parsing error");
+            return;
+        }
     }
     else
     {
-
         Serial.print("Message arrived [");
         Serial.print(topic);
-        Serial.print("] ");
+        Serial.print("]: ");
         Serial.print(doc.as<String>());
-            Serial.println();
+        Serial.println();
     }
 }
 
@@ -85,11 +113,13 @@ void loopMQTT()
         reconnectMQTT();
     }
     client.loop();
+    delay(10);
 }
 
-void publishStatus(String status)
+void publishStatus(bool att, String status)
 {
     StaticJsonDocument<200> doc;
+    doc["att"] = att;
     doc["status"] = status;
 
     if (client.connected())

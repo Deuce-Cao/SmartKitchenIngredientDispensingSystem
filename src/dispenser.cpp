@@ -1,68 +1,49 @@
 #include "dispenser.h"
 #include "config.h"
 #include "connection.h"
+#include "stepper_motor.h"
+#include "IR_sensor.h"
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
-int motorPin = MOTOR_PIN;
-int sensorPin = SENSOR_PIN;
+struct Task
+{
+    Position pos;
+    int count;
+};
+
+static Task currentTask;
+static bool hasTask = false;
 
 void initDispenser()
 {
-    pinMode(motorPin, OUTPUT);
-    pinMode(sensorPin, INPUT);
-    // Initialize motor (servo, stepper, etc.)
+    initStepperMotor();
+    initIR();
+    hasTask = false;
 }
 
-bool checkOccupancy()
-{
-
-    int val = digitalRead(sensorPin); // or analogRead if applicable
-    return (val == HIGH);             // true means blocked
+bool isBusy(){
+    return hasTask;
 }
 
-bool openGate()
+void queueTask(Position pos, int count)
 {
-    // Send signal to motor to open & close gate once
-    
-    /*
-    two stepper motors
-    Motor 1 Left:
-    When a comnmand is received, the motor always rotates to either dirextion (depends on the ingredient) for a certain speed and angle, 
-    then goes back to the initial position double speed. 
-    Motor 2 Right
-    */
-    Serial.println("Gate opened once.");
-    return true; // or false if failed
+    currentTask.pos = pos;
+    currentTask.count = count;
+    hasTask = true;
 }
 
-bool dispenseUnits(int count)
+void loopDispenser()
 {
-    for (int i = 0; i < count; i++)
+    dropOne(currentTask.pos);
+    currentTask.count--;
+
+    if (currentTask.count <= 0)
     {
-        bool success = openGate();
-        if (!success)
-        {
-            Serial.println("Error during gate open.");
-            return false;
-        }
-        delay(500); // brief pause between units (tune as needed)
+        hasTask = false;
+        afterDrop();
+        publishStatus(0, "Task completed");
+        Serial.println("Task completed");
     }
-    publishStatus(String(count));
-    return true;
-}
-
-bool handleCommand(int count)
-{
-    Serial.printf("Handling dispense command: %d unit(s)\n", count);
-
-    if (checkOccupancy())
-    {   
-        publishStatus("Blocked");
-        Serial.println("Dispense blocked. Area occupied.");
-        return false;
-    }
-
-    bool result = dispenseUnits(count);
-    return result;
+    delay(100);
 }

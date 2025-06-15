@@ -1,10 +1,10 @@
 #ifndef DISPENSER_H
 #define DISPENSER_H
+#include "config.h"
 
 void initDispenser();
-bool checkOccupancy();
-bool openGate();
-bool dispenseUnits(int count);
-bool handleCommand(int count);
+void loopDispenser();
+bool isBusy();
+void queueTask(Position pos, int count);
 
 #endif
