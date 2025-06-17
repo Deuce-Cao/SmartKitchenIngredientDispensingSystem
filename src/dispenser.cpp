@@ -6,6 +6,13 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
+
+/* CMD
+#define CMD {"flag" : 0, "pos" : [0, 0, 0, 0], "count" : [0, 0, 0, 0]}
+flag 0 = DISPENSE, 1 = OPEN, 2 = CLOSE, 3 = CW 1 STEP, 4 = CCW 1 STEP
+pos = 0 disable 1 enable for each position in order LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP
+count = number for each position in order LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP
+*/
 struct Task
 {
     Position pos;

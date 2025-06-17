@@ -16,9 +16,11 @@
 #define PING_TOPIC "dispenser/test/esp32/ping"
 
 #define STEPS_PER_REV 2048
-#define MOTOR_A_PINS {16, 18, 17, 19}
-#define MOTOR_B_PINS {27, 25, 26, 13}
-//#define SENSOR_PIN_EN 39
+#define MOTOR_A_PINS {19, 17, 18, 16}
+// #define MOTOR_A_PINS {16, 18, 17, 19}
+#define MOTOR_B_PINS {13, 26, 25, 27}
+// define MOTOR_B_PINS {27, 25, 26, 13}
+// #define SENSOR_PIN_EN 39
 #define SENSOR_PIN_OUT 34
 
 #define RECONNECT_INTERVAL 5000
@@ -37,10 +39,13 @@ enum Position
     RIGHT_TOP,
 };
 
+#define MOTOR_ANGLE_LB 39.2 // 0 LT
+#define MOTOR_ANGLE_LT 39.2 // 1 LB
+#define MOTOR_ANGLE_RB 39.2 // 2 RT
+#define MOTOR_ANGLE_RT 39.2 // 3 RB
+#define CMD {"flag" : 0, "pos" : {0, 0, 0, 0}, "count" : {0, 0, 0, 0}}
+/* flag 0 = DISPENSE, 1 = OPEN, 2 = CLOSE, 3 = CW 1 STEP, 4 = CCW 1 STEP*/
+
 #define ORDER {"ID" : 0, "items" : [ "a", "b", "c", "d" ], "time" : "2025-01-01 00:00:00.0"}
-
-
-
-
 
 #endif
