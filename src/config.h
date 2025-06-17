@@ -7,6 +7,9 @@
 #define LAB_WIFI_SSID "SEPT SmartLAB 537"
 #define LAB_WIFI_PASS "Factory1"
 
+#define SUSHANT_SSID "BELL485"
+#define SUSHANT_PASS "6695F65FC5A6"
+
 #define MQTT_SERVER "broker.hivemq.com"
 #define MQTT_PORT 1883
 
