@@ -48,7 +48,7 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
 
     String topicStr = String(topic);
 
-    if (topicStr == PING_TOPIC && doc.containsKey("reboot"))
+    if (topicStr == PING_TOPIC && doc["CMD"] == "reboot")
     {
         ESP.restart();
     }
