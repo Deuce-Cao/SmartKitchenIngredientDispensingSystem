@@ -5,9 +5,12 @@ import threading
 import paho.mqtt.client as mqtt
 
 MQTT_BROKER = "broker.hivemq.com"
-CMD_TOPIC = "dispenser/test/esp32/open"
-STATUS_TOPIC = "dispenser/status/#"
-PING_TOPIC = "dispenser/test/esp32/ping"
+# CMD_TOPIC = "dispenser/test/esp32/open"
+# STATUS_TOPIC = "dispenser/status/#"
+# PING_TOPIC = "dispenser/test/esp32/ping"
+CMD_TOPIC = "dispenser/local-test/esp32/open"
+STATUS_TOPIC = "dispenser/local-test/status/#"
+PING_TOPIC = "dispenser/local-test/esp32/ping"
 
 errorCount = 0
 rebootCount = 0
@@ -19,62 +22,12 @@ dispenserStatus = ""
 cmdQueue = queue.Queue()
 
 
-cmdQueue.put({"pos":0,"count":4})
-cmdQueue.put({"pos":2,"count":2})
-cmdQueue.put({"pos":1,"count":1})
-cmdQueue.put({"pos":3,"count":3})
-cmdQueue.put({"pos":0,"count":4})
-cmdQueue.put({"pos":3,"count":2})
+cmdQueue.put({"flag":0,"pos":[1,0,0,0],"count":[2,0,0,0]})
+cmdQueue.put({"flag":0,"pos":[0,1,0,0],"count":[0,2,0,0]})
+cmdQueue.put({"flag":0,"pos":[0,0,1,0],"count":[0,0,2,0]})
+cmdQueue.put({"flag":0,"pos":[0,0,0,1],"count":[0,0,0,2]})
+cmdQueue.put({"flag":0,"pos":[1,1,1,1],"count":[1,2,1,2]})
 
-
-# cmdQueue.put({"pos":9,"count":4})
-# cmdQueue.put({"pos":9,"count":2})
-# cmdQueue.put({"pos":9,"count":1})
-# #################################
-# cmdQueue.put({"pos":0,"count":4})
-# cmdQueue.put({"pos":2,"count":2})
-# cmdQueue.put({"pos":1,"count":1})
-# cmdQueue.put({"pos":3,"count":3})
-# cmdQueue.put({"pos":0,"count":4})
-# cmdQueue.put({"pos":3,"count":2})
-# #################################
-# cmdQueue.put({"pos":9,"count":3})
-# cmdQueue.put({"pos":9,"count":4})
-# cmdQueue.put({"pos":9,"count":2})
-# cmdQueue.put({"pos":9,"count":1})
-# #################################
-# cmdQueue.put({"pos":9,"count":3})
-# cmdQueue.put({"pos":9,"count":4})
-# cmdQueue.put({"pos":9,"count":2})
-# cmdQueue.put({"pos":9,"count":1})
-# cmdQueue.put({"pos":9,"count":3})
-# #################################
-# cmdQueue.put({"pos":0,"count":4})
-# cmdQueue.put({"pos":2,"count":2})
-# #################################
-# cmdQueue.put({"pos":9,"count":4})
-# cmdQueue.put({"pos":9,"count":2})
-# cmdQueue.put({"pos":9,"count":1})
-# cmdQueue.put({"pos":9,"count":3})
-# cmdQueue.put({"pos":9,"count":4})
-# cmdQueue.put({"pos":9,"count":2})
-# cmdQueue.put({"pos":9,"count":1})
-# cmdQueue.put({"pos":9,"count":3})
-# cmdQueue.put({"pos":9,"count":4})
-# cmdQueue.put({"pos":9,"count":2})
-# #################################
-# cmdQueue.put({"pos":0,"count":4})
-# #################################
-# cmdQueue.put({"pos":9,"count":1})
-# cmdQueue.put({"pos":9,"count":3})
-# cmdQueue.put({"pos":9,"count":4})
-# cmdQueue.put({"pos":9,"count":2})
-# cmdQueue.put({"pos":9,"count":1})
-# cmdQueue.put({"pos":9,"count":3})
-# cmdQueue.put({"pos":9,"count":4})
-# cmdQueue.put({"pos":9,"count":2})
-# cmdQueue.put({"pos":9,"count":1})
-# cmdQueue.put({"pos":9,"count":3})
 
 def onConnect(client, userdata, flags, rc):
     print("Connected to broker")
