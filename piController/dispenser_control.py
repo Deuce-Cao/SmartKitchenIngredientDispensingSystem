@@ -32,7 +32,7 @@ cmdQueue.put({"flag":0,"pos":[1,1,1,1],"count":[1,2,1,2]})
 def onConnect(client, userdata, flags, rc):
     print("Connected to broker")
     client.subscribe(STATUS_TOPIC)
-    client.publish(PING_TOPIC, json.dumps({"ping":0}))
+    client.publish(PING_TOPIC, json.dumps({"CMD":"ping"}))
 
 def onMessage(client, userdata, msg):
     global dispenserStatus, errorCount
@@ -84,7 +84,7 @@ def main():
                 break
             if errorCount >= MAX_ERRORS:
                 print("Rebooting")
-                client.publish(PING_TOPIC, json.dumps({"reboot": rebootCount}))
+                client.publish(PING_TOPIC, json.dumps({"CMD": "reboot", "count": rebootCount}))
                 dispenserStatus = "REBOOTING"
                 attReady.clear()
                 errorCount = 0
