@@ -2,8 +2,6 @@
 #include "connection.h"
 #include "dispenser.h"
 #include "IR_sensor.h"
-// #include "connection_copy.h"
-// #include "dispenser_copy.h"
 
 static bool isReported = false;
 static unsigned long lastReportTime = 0;

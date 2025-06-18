@@ -2,6 +2,7 @@
 #include <WiFi.h>
 #include <WiFiMulti.h>
 #include <PubSubClient.h>
+#include <Arduino.h>
 #include "connection.h"
 #include "dispenser.h"
 #include <ArduinoJson.h>
@@ -15,7 +16,6 @@ void connectToWiFi()
     WiFi.mode(WIFI_STA);
     wifiMulti.addAP(HOME_WIFI_SSID, HOME_WIFI_PASS);
     wifiMulti.addAP(LAB_WIFI_SSID, LAB_WIFI_PASS);
-    wifiMulti.addAP(SUSHANT_SSID, SUSHANT_PASS);
 
     while (wifiMulti.run() != WL_CONNECTED)
     {
@@ -36,7 +36,7 @@ void connectToMQTT()
 
 void mqttCallback(char *topic, byte *payload, unsigned int length)
 {
-    StaticJsonDocument<200> doc;
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, payload, length);
 
     if (error)
@@ -48,24 +48,50 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
 
     String topicStr = String(topic);
 
-    if (topicStr == PING_TOPIC && doc.containsKey("reboot"))
+    if (topicStr == PING_TOPIC && doc["CMD"] == "reboot")
     {
         ESP.restart();
     }
 
+/* CMD
+#define CMD {"flag" : 0, "pos" : {0, 0, 0, 0}, "count" : {0, 0, 0, 0}}
+flag 0 = DISPENSE, 1 = OPEN, 2 = CLOSE, 3 = CW 1 STEP, 4 = CCW 1 STEP
+pos = 0 disable 1 enable for each position in order LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP
+count = number for each position in order LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP
+*/
     if (topicStr.endsWith("/open"))
     {
         try
         {
-            Position pos = doc["pos"];
-            if (pos < 0 || pos > 3)
+            int flag = doc["flag"] | 0;
+            if (flag < 0 || flag > 4)
             {
-                Serial.println("Invalid position");
-                publishStatus(1, "ERROR: Invalid position");
+                Serial.println("Invalid flag");
+                publishStatus(1, "ERROR: Invalid flag");
                 return;
             }
-            int count = doc["count"];
-            if (count <= 0)
+            bool pos[4] = {
+                doc["pos"][0] | 0,
+                doc["pos"][1] | 0,
+                doc["pos"][2] | 0,
+                doc["pos"][3] | 0
+            };
+            for (int i = 0; i < 4; i++)
+            {
+                if (pos[i] < 0 || pos[i] > 1)
+                {
+                    Serial.println("Invalid position");
+                    publishStatus(1, "ERROR: Invalid position");
+                    return;
+                }
+            }
+            int count[4] = {
+                doc["count"][0] | 0,
+                doc["count"][1] | 0,
+                doc["count"][2] | 0,
+                doc["count"][3] | 0
+            };
+            if (count[0] < 0 && count[1] < 0 && count[2] < 0 && count[3] < 0)
             {
                 Serial.println("Invalid count");
                 publishStatus(1, "ERROR: Invalid count");
@@ -74,7 +100,7 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
             Serial.println(doc.as<String>());
             if (!isBusy())
             {
-                queueTask(pos, count);
+                queueTask(flag, pos, count);
             }
             else
             {
@@ -135,7 +161,7 @@ void loopMQTT()
 
 void publishStatus(bool att, String status)
 {
-    StaticJsonDocument<200> doc;
+    JsonDocument doc;
     doc["att"] = att;
     doc["status"] = status;
 
