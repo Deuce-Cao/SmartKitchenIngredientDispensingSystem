@@ -4,8 +4,7 @@
 #include "connection.h"
 
 const int sensorPin = SENSOR_PIN_OUT;
-enum HolderState
-{
+const int sensorThreshold = SENSOR_THRESHOLD; enum HolderState {
     EMPTY,
     READY,
     OCCUPIED,
@@ -22,7 +21,7 @@ void initIR()
 bool isDetected()
 {
     float x = analogRead(sensorPin);
-    return x < 3500;
+    return x < sensorThreshold;
 }
 
 void updateHolder()

@@ -14,6 +14,8 @@ PubSubClient client(espClient);
 void connectToWiFi()
 {
     WiFi.mode(WIFI_STA);
+    WiFi.channel(6);
+    wifiMulti.addAP(VIRTUAL_SSID, VIRTUAL_PASS);
     wifiMulti.addAP(HOME_WIFI_SSID, HOME_WIFI_PASS);
     wifiMulti.addAP(LAB_WIFI_SSID, LAB_WIFI_PASS);
 

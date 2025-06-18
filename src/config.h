@@ -10,14 +10,19 @@
 #define SUSHANT_SSID "BELL485"
 #define SUSHANT_PASS "6695F65FC5A6"
 
+#define VIRTUAL_SSID "Wokwi-GUEST"
+#define VIRTUAL_PASS ""
+
 #define MQTT_SERVER "broker.hivemq.com"
 #define MQTT_PORT 1883
 
 #define DISPENSER_ID "dispenser_A"
-#define DISPENSE_TOPIC "dispenser/test/esp32/#"
-#define STATUS_TOPIC "dispenser/status/esp32/A"
-#define PING_TOPIC "dispenser/test/esp32/ping"
-
+//#define DISPENSE_TOPIC "dispenser/test/esp32/#"
+#define DISPENSE_TOPIC "dispenser/local-test/esp32/#"
+//#define STATUS_TOPIC "dispenser/status/esp32/A"
+#define STATUS_TOPIC "dispenser/local-test/status/esp32/A"
+//#define PING_TOPIC "dispenser/test/esp32/ping"
+#define PING_TOPIC "dispenser/local-test/esp32/ping"
 #define STEPS_PER_REV 2048
 #define MOTOR_A_PINS {19, 17, 18, 16}
 // #define MOTOR_A_PINS {16, 18, 17, 19}
@@ -46,6 +51,10 @@ enum Position
 #define MOTOR_ANGLE_LT 39.2 // 1 LB
 #define MOTOR_ANGLE_RB 39.2 // 2 RT
 #define MOTOR_ANGLE_RT 39.2 // 3 RB
+#define SENSOR_THRESHOLD 500
+
+
+
 #define CMD {"flag" : 0, "pos" : {0, 0, 0, 0}, "count" : {0, 0, 0, 0}}
 /* flag 0 = DISPENSE, 1 = OPEN, 2 = CLOSE, 3 = CW 1 STEP, 4 = CCW 1 STEP*/
 
