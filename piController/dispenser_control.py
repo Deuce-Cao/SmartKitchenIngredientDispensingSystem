@@ -160,7 +160,6 @@ def main():
             if errorCount >= MAX_ERRORS:
                 print("Rebooting")
                 client.publish(PING_TOPIC, json.dumps({"CMD": "reboot", "count": rebootCount}))
-                client.publish(PING_TOPIC, json.dumps({"CMD": "reboot", "count": rebootCount}))
                 dispenserStatus = "REBOOTING"
                 attReady.clear()
                 errorCount = 0
