@@ -53,6 +53,8 @@ void queueTask(int flag, bool pos[], int count[])
 
 void motorBehaviour(int flag, Position pos)
 {
+    // Serial.print("motorBehaviour");
+    Serial.println(flag, pos);
     switch (flag)
     {
     case 0:
@@ -80,8 +82,12 @@ void motorBehaviour(int flag, Position pos)
 
 void loopDispenser()
 {
+    // Serial.print("currentIndex");
+    // Serial.println(currentIndex);
     while (currentIndex < 4)
     {
+        Serial.print("pos");
+        Serial.println(currentTask.pos[currentIndex]);
         if (currentTask.pos[currentIndex])
         {
             if (dispensed < currentTask.count[currentIndex])
@@ -102,6 +108,7 @@ void loopDispenser()
         }
         else
         {
+            // Serial.println("nextIndex");
             currentIndex++;
         }
     }

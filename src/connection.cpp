@@ -53,16 +53,34 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
         ESP.restart();
     }
 
-/* CMD
-#define CMD {"flag" : 0, "pos" : {0, 0, 0, 0}, "count" : {0, 0, 0, 0}}
-flag 0 = DISPENSE, 1 = OPEN, 2 = CLOSE, 3 = CW 1 STEP, 4 = CCW 1 STEP
-pos = 0 disable 1 enable for each position in order LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP
-count = number for each position in order LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP
-*/
+    /* CMD
+    #define CMD {"flag" : 0, "pos" : {0, 0, 0, 0}, "count" : {0, 0, 0, 0}}
+    flag 0 = DISPENSE, 1 = OPEN, 2 = CLOSE, 3 = CW 1 STEP, 4 = CCW 1 STEP
+    pos = 0 disable 1 enable for each position in order LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP
+    count = number for each position in order LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP
+    */
     if (topicStr.endsWith("/open"))
     {
         try
         {
+            if (!doc.containsKey("flag") || !doc.containsKey("pos") || !doc.containsKey("count"))
+            {
+                Serial.println("Missing required fields");
+                publishStatus(1, "ERROR: Missing required fields");
+                return;
+            }
+            if (!doc["pos"].is<JsonArray>() || !doc["count"].is<JsonArray>())
+            {
+                Serial.println("pos or count is not an array");
+                publishStatus(1, "ERROR: pos or count is not an array");
+                return;
+            }
+            if (doc["pos"].size() != 4 || doc["count"].size() != 4)
+            {
+                Serial.println("pos or count array size invalid");
+                publishStatus(1, "ERROR: pos or count array size invalid");
+                return;
+            }
             int flag = doc["flag"] | 0;
             if (flag < 0 || flag > 4)
             {
@@ -70,36 +88,41 @@ count = number for each position in order LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, R
                 publishStatus(1, "ERROR: Invalid flag");
                 return;
             }
-            bool pos[4] = {
-                doc["pos"][0] | 0,
-                doc["pos"][1] | 0,
-                doc["pos"][2] | 0,
-                doc["pos"][3] | 0
-            };
+            bool pos[4];
+            int count[4];
             for (int i = 0; i < 4; i++)
             {
-                if (pos[i] < 0 || pos[i] > 1)
+                int p = doc["pos"][i] | 0;
+                int c = doc["count"][i] | 0;
+                if (p != 0 && p != 1)
                 {
-                    Serial.println("Invalid position");
-                    publishStatus(1, "ERROR: Invalid position");
+                    Serial.println("Invalid position value");
+                    publishStatus(1, "ERROR: Invalid position value");
                     return;
                 }
-            }
-            int count[4] = {
-                doc["count"][0] | 0,
-                doc["count"][1] | 0,
-                doc["count"][2] | 0,
-                doc["count"][3] | 0
-            };
-            if (count[0] < 0 && count[1] < 0 && count[2] < 0 && count[3] < 0)
-            {
-                Serial.println("Invalid count");
-                publishStatus(1, "ERROR: Invalid count");
-                return;
+                if (c < 0)
+                {
+                    Serial.println("Invalid count value");
+                    publishStatus(1, "ERROR: Invalid count value");
+                    return;
+                }
+                pos[i] = p;
+                count[i] = c;
             }
             Serial.println(doc.as<String>());
             if (!isBusy())
             {
+                // Serial.print("Flag: ");
+                // Serial.println(flag);
+                // Serial.print("Pos: ");
+                // for (int i = 0; i < 4; i++)
+                // {
+                //     Serial.print(pos[i]);
+                //     Serial.print(": ");
+                //     Serial.print(count[i]);
+                //     Serial.print(", ");
+                // }
+                // Serial.println();
                 queueTask(flag, pos, count);
             }
             else
