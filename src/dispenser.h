@@ -5,6 +5,6 @@
 void initDispenser();
 void loopDispenser();
 bool isBusy();
-void queueTask(Position pos, int count);
+void queueTask(int flag, bool pos[], int count[]);
 
 #endif

@@ -22,6 +22,7 @@ void initIR()
 bool isDetected()
 {
     float x = analogRead(sensorPin);
+    // Serial.println(x);
     return x < 3500;
 }
 
@@ -55,5 +56,6 @@ void afterDrop()
 }
 
 bool isAvailable(){
+    // Serial.println(holderState);
     return holderState == READY;
 }

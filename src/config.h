@@ -28,9 +28,9 @@
 
 #define RECONNECT_INTERVAL 5000
 #define MOTOR_INTERVAL 300
-#define RESET_INTERVAL 100
+#define RESET_INTERVAL 300
 #define DISPENSE_INTERVAL 100
-#define REPORT_INTERVAL 500
+#define REPORT_INTERVAL 1000
 #define STATUS_INTERVAL 50
 #define MQTT_INTERVAL 20
 
@@ -42,10 +42,10 @@ enum Position
     RIGHT_TOP,
 };
 
-#define MOTOR_ANGLE_LB 39.2 // 0 LT
-#define MOTOR_ANGLE_LT 39.2 // 1 LB
-#define MOTOR_ANGLE_RB 39.2 // 2 RT
-#define MOTOR_ANGLE_RT 39.2 // 3 RB
+#define MOTOR_ANGLE_LB 42.5 // 0 LT
+#define MOTOR_ANGLE_LT 42.5 // 1 LB
+#define MOTOR_ANGLE_RB 42.5 // 2 RT
+#define MOTOR_ANGLE_RT 42.5 // 3 RB
 #define CMD {"flag" : 0, "pos" : {0, 0, 0, 0}, "count" : {0, 0, 0, 0}}
 /* flag 0 = DISPENSE, 1 = OPEN, 2 = CLOSE, 3 = CW 1 STEP, 4 = CCW 1 STEP*/
 
